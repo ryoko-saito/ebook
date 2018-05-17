@@ -4,8 +4,40 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 )
+
+func SaveImageSpecifyDirectory(url string, dir string) error {
+	currentDir, err := filepath.Abs(".")
+	if err != nil {
+		return err
+	}
+
+	//ワーキングディレクトリを指定のディレクトリに変更
+	_, err = os.Stat(dir)
+	if err != nil {
+		err = os.Mkdir(dir, 0755)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = os.Chdir(currentDir + "/" + dir)
+	if err != nil {
+		return err
+	}
+
+	err = SaveImage(url)
+	if err != nil {
+		return err
+	}
+
+	//ワーキングディレクトリを戻す
+	err = os.Chdir(currentDir)
+
+	return err
+}
 
 func SaveImage(url string) error {
 	resp, err := http.Get(url)
