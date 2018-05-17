@@ -25,7 +25,10 @@ func SaveImage(url string) error {
 	if err != nil {
 		return err
 	}
-	file.Write(body)
+	_, err = file.Write(body)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
